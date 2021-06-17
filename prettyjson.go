@@ -15,6 +15,13 @@ import (
 	"os"
 )
 
+// type for command line arguments for script
+type Args struct {
+	order  string
+	depth  int
+	indent int
+}
+
 // read piped stdin and return resulting string
 // inspired by https://flaviocopes.com/go-shell-pipes/
 func readStdin() (out string, err error) {
@@ -39,6 +46,15 @@ func readStdin() (out string, err error) {
 		raw = append(raw, char)
 	}
 	return string(raw), nil
+}
+
+// parses command line arguments and returns them
+func getArgs() (a Args, terminal bool) {
+	return Args{
+		"asc"
+		5
+		5
+	}, true
 }
 
 // script entrypoint
