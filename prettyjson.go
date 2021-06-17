@@ -48,7 +48,7 @@ func readStdin() (out []byte, err error) {
 func getArgs() (args CLArgs, err error) {
 	// define parse
 	parser := argparse.NewParser("prettyjson", "Pretty prints provided json string to stdout")
-	indent := parser.Int("i", "indent", &argparse.Options{Required: false, Help: "Indent per level", Default: 4})
+	indent := parser.Int("i", "indent", &argparse.Options{Required: false, Help: "Indent per recursion level", Default: 4})
 	version := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Get script version"})
 	err = parser.Parse(os.Args)
 	// return resulting struct
