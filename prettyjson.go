@@ -17,6 +17,8 @@ import (
 	"github.com/akamensky/argparse"
 )
 
+const VERSION = 1.0
+
 // Type for command line arguments for script.
 type CLArgs struct {
 	Order  string
@@ -69,8 +71,14 @@ func getArgs() (args CLArgs, terminal bool, err error) {
 // Script entrypoint.
 func main() {
 	// get args
-	args, _, _ := getArgs()
-	fmt.Print(args)
+	args, term, err := getArgs()
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	if term == true {
+		return
+	}
 	// get piped input
 	input, err := readStdin()
 	if err != nil {
@@ -86,4 +94,5 @@ func main() {
 	}
 	// cont
 	fmt.Print(result)
+	fmt.Print(args)
 }
