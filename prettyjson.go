@@ -8,14 +8,16 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 )
 
-// package entrypoing
-// much of the basic IO code was inspired by https://flaviocopes.com/go-shell-pipes/
-func main() {
+// read piped stdin and return resulting string
+// inspired by https://flaviocopes.com/go-shell-pipes/
+func readStdin() (out string, err error) {
 	info, err := os.Stdin.Stat()
 	// throw piped error
 	if err != nil {
@@ -23,8 +25,7 @@ func main() {
 	}
 	// panic error when no piped stdin
 	if (info.Mode() & os.ModeNamedPipe) == 0 {
-		fmt.Println("ERROR: No piped input for prettyjson, use prettyjson --help for usage infomration")
-		return
+		return "", errors.New("No piped input for prettyjson, use prettyjson --help for usage information")
 	}
 	// parse stdin to string input
 	reader := bufio.NewReader(os.Stdin)
@@ -32,11 +33,29 @@ func main() {
 	for {
 		char, _, err := reader.ReadRune()
 		if err != nil && err == io.EOF {
+			err = nil
 			break
 		}
 		raw = append(raw, char)
 	}
-	json_string := string(raw)
-	// parse utf8 str
-	fmt.Println(json_string)
+	return string(raw), nil
+}
+
+// script entrypoint
+func main() {
+	// get piped input
+	input, err := readStdin()
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	// parse dynamic json map
+	var result map[string]interface{}
+	err = json.Unmarshal([]byte(input), &result)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	// cont
+	fmt.Print(result)
 }
