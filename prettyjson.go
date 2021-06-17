@@ -17,7 +17,7 @@ import (
 	"github.com/akamensky/argparse"
 )
 
-const VERSION = 1.0
+const VERSION = "1.0"
 
 // Type for command line arguments for script.
 type CLArgs struct {
@@ -56,16 +56,21 @@ func readStdin() (out string, err error) {
 func getArgs() (args CLArgs, terminal bool, err error) {
 	// define parse
 	parser := argparse.NewParser("prettyjson", "Pretty prints provided json string to stdout")
-	order := parser.String("o", "order", &argparse.Options{Required: false, Help: "Key order", Default: nil})
+	order := parser.String("o", "order", &argparse.Options{Required: false, Help: "Key order, either 'asc' or 'desc'", Default: nil})
 	depth := parser.Int("d", "depth", &argparse.Options{Required: false, Help: "Recursion depth", Default: -1})
 	indent := parser.Int("i", "indent", &argparse.Options{Required: false, Help: "Indent per level", Default: 4})
-	// parse input and return resulting struct
+	term := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Get script version"})
 	err = parser.Parse(os.Args)
+	// show version if flag was set
+	if *term {
+		fmt.Print("prettyjson version " + VERSION)
+	}
+	// return resulting struct
 	return CLArgs{
 		Order:  *order,
 		Depth:  *depth,
 		Indent: *indent,
-	}, false, err
+	}, *term, err
 }
 
 // Script entrypoint.
