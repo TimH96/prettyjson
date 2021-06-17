@@ -3,7 +3,7 @@ prettyjson.go
 author: TimH96
 */
 
-// shell tool to pretty print .json
+// shell tool to pretty print json
 package main
 
 import (
@@ -13,13 +13,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/akamensky/argparse"
 )
 
 // type for command line arguments for script
-type Args struct {
-	order  string
-	depth  int
-	indent int
+type CLArgs struct {
+	Order  string
+	Depth  int
+	Indent int
 }
 
 // read piped stdin and return resulting string
@@ -49,16 +51,26 @@ func readStdin() (out string, err error) {
 }
 
 // parses command line arguments and returns them
-func getArgs() (a Args, terminal bool) {
-	return Args{
-		"asc"
-		5
-		5
-	}, true
+func getArgs() (args CLArgs, terminal bool, err error) {
+	// define parse
+	parser := argparse.NewParser("prettyjson", "Pretty prints provided json string to stdout")
+	order := parser.String("o", "order", &argparse.Options{Required: false, Help: "Key order", Default: nil})
+	depth := parser.Int("d", "depth", &argparse.Options{Required: false, Help: "Recursion depth", Default: -1})
+	indent := parser.Int("i", "indent", &argparse.Options{Required: false, Help: "Indent per level", Default: 4})
+	// parse input and return resulting struct
+	err = parser.Parse(os.Args)
+	return CLArgs{
+		Order:  *order,
+		Depth:  *depth,
+		Indent: *indent,
+	}, false, err
 }
 
 // script entrypoint
 func main() {
+	// get args
+	args, _, _ := getArgs()
+	fmt.Print(args)
 	// get piped input
 	input, err := readStdin()
 	if err != nil {
