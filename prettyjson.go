@@ -3,7 +3,7 @@ prettyjson.go
 author: TimH96
 */
 
-// shell tool to pretty print json
+// Shell tool to pretty print json.
 package main
 
 import (
@@ -17,15 +17,15 @@ import (
 	"github.com/akamensky/argparse"
 )
 
-// type for command line arguments for script
+// Type for command line arguments for script.
 type CLArgs struct {
 	Order  string
 	Depth  int
 	Indent int
 }
 
-// read piped stdin and return resulting string
-// inspired by https://flaviocopes.com/go-shell-pipes/
+// Read piped stdin and return resulting string.
+// Inspired by: https://flaviocopes.com/go-shell-pipes/
 func readStdin() (out string, err error) {
 	info, err := os.Stdin.Stat()
 	// throw piped error
@@ -50,7 +50,7 @@ func readStdin() (out string, err error) {
 	return string(raw), nil
 }
 
-// parses command line arguments and returns them
+// Parses command line arguments and returns them.
 func getArgs() (args CLArgs, terminal bool, err error) {
 	// define parse
 	parser := argparse.NewParser("prettyjson", "Pretty prints provided json string to stdout")
@@ -66,7 +66,7 @@ func getArgs() (args CLArgs, terminal bool, err error) {
 	}, false, err
 }
 
-// script entrypoint
+// Script entrypoint.
 func main() {
 	// get args
 	args, _, _ := getArgs()
