@@ -9,9 +9,12 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 )
 
+// package entrypoing
+// much of the basic IO code was inspired by https://flaviocopes.com/go-shell-pipes/
 func main() {
 	info, err := os.Stdin.Stat()
 	// throw piped error
@@ -20,12 +23,20 @@ func main() {
 	}
 	// panic error when no piped stdin
 	if (info.Mode() & os.ModeNamedPipe) == 0 {
-		panic("No piped input for prettyjson, use prettyjson --help for usage infomration")
+		fmt.Println("ERROR: No piped input for prettyjson, use prettyjson --help for usage infomration")
+		return
 	}
-	// parse json input
+	// parse stdin to string input
 	reader := bufio.NewReader(os.Stdin)
-	//
-	fmt.Println(reader.ReadLine())
-	fmt.Println(info)
-	fmt.Println(err)
+	var raw []rune
+	for {
+		char, _, err := reader.ReadRune()
+		if err != nil && err == io.EOF {
+			break
+		}
+		raw = append(raw, char)
+	}
+	json_string := string(raw)
+	// parse utf8 str
+	fmt.Println(json_string)
 }
